@@ -1,0 +1,231 @@
+<!DOCTYPE html> <html> <head> <title>Logo在线</title> <style> canvas { border: 1px solid black; margin-bottom: 10px; }
+
+	.button {		background-color: #4CAF50;
+
+		color: white;
+
+		padding: 10px 20px;
+
+		border: none;
+
+		cursor: pointer;
+
+		font-size: 18px;
+
+	}
+
+	.button:hover {
+
+		background-color: #3e8e41;
+
+	}
+
+	.input {
+
+		font-size: 18px;
+
+		padding: 5px;
+
+	}
+
+</style>
+
+</head> <body> <h1>Logo小海龟</h1> <canvas id="myCanvas" width="1000" height="10000"></canvas> <div> <input type="text" class="input" id="commandInput" placeholder="在这输入..."> <button class="button" onclick="executeCommand()">确定</button> <button class="button" onclick="clearCanvas()">清除</button> </div> <script> var canvas = document.getElementById("myCanvas"); var context = canvas.getContext("2d");
+
+	var turtleX = canvas.width / 2;
+
+	var turtleY = canvas.height / 2;
+
+	var turtleAngle = -90;
+
+	function drawTurtle() {
+
+		context.beginPath();
+
+		context.moveTo(turtleX, turtleY);
+
+		context.lineTo(turtleX + 15 * Math.cos((turtleAngle - 30) * Math.PI / 180), turtleY + 15 * Math.sin((turtleAngle - 30) * Math.PI / 180));
+
+		context.lineTo(turtleX + 5 * Math.cos(turtleAngle * Math.PI / 180), turtleY + 5 * Math.sin(turtleAngle * Math.PI / 180));
+
+		context.lineTo(turtleX + 15 * Math.cos((turtleAngle + 30) * Math.PI / 180), turtleY + 15 * Math.sin((turtleAngle + 30) * Math.PI / 180));
+
+		context.closePath();
+
+		context.fill();
+
+	}
+
+	function moveTurtle(distance) {
+
+		var newX = turtleX + distance * Math.cos(turtleAngle * Math.PI / 180);
+
+		var newY = turtleY + distance * Math.sin(turtleAngle * Math.PI / 180);
+
+		context.beginPath();
+
+		context.moveTo(turtleX, turtleY);
+
+		context.lineTo(newX, newY);
+
+		context.stroke();
+
+		turtleX = newX;
+
+		turtleY = newY;
+
+		drawTurtle();
+
+	}
+
+	function turnTurtle(angle) {
+
+		turtleAngle += angle;
+
+		drawTurtle();
+
+	}
+
+	function executeCommand() {
+
+		var commandInput = document.getElementById("commandInput");
+
+		var command = commandInput.value.trim().toLowerCase();
+
+		if (command === "") {
+
+			alert("Please enter a command.");
+
+			return;
+
+		}
+
+		commandInput.value = "";
+
+		var parts = command.split(" ");
+
+		switch (parts[0]) {
+
+			case "fd":
+
+				moveTurtle(parseInt(parts[1]));
+
+				break;
+
+			case "bk":
+
+				moveTurtle(-parseInt(parts[1]));
+
+				break;
+
+			case "lt":
+
+				turnTurtle(-parseInt(parts[1]));
+
+				break;
+
+			case "rt":
+
+				turnTurtle(parseInt(parts[1]));
+
+				break;
+
+			case "cl":
+
+				clearCanvas();
+
+				break;
+
+			case "repeat":
+
+				var count = parseInt(parts[1]);
+
+				var commands = parts.slice(2);
+
+				for (var i = 0; i < count; i++) {
+
+					executeCommands(commands);
+
+				}
+
+				break;
+
+			default:
+
+				alert("Unknown command: " + command);
+
+				break;
+
+		}
+
+	}
+
+	function executeCommands(commands) {
+
+		for (var i = 0; i < commands.length; i++) {
+
+			switch (commands[i]) {
+
+				case "fd":
+
+					moveTurtle(parseInt(commands[i + 1]));
+
+					i++;
+
+					break;
+
+				case "bk":
+
+					moveTurtle(-parseInt(commands[i + 1]));
+
+					i++;
+
+					break;
+
+				case "lt":
+
+					turnTurtle(-parseInt(commands[i + 1]));
+
+					i++;
+
+					break;
+
+				case "rt":
+
+					turnTurtle(parseInt(commands[i + 1]));
+
+					i++;
+
+					break;
+
+				default:
+
+					alert("Unknown command: " + commands[i]);
+
+					break;
+
+			}
+
+		}
+
+	}
+
+	function clearCanvas() {
+
+		context.clearRect(0, 0, canvas.width, canvas.height);
+
+		turtleX = canvas.width / 2;
+
+		turtleY = canvas.height / 2;
+
+		turtleAngle = -90;
+
+		drawTurtle();
+
+	}
+
+	drawTurtle(); // initialize turtle on canvas
+
+</script>
+
+</body> </html>
